@@ -14,6 +14,9 @@ import webapp2
 
 # TODO: input validation
 # TODO: transactions
+# TODO: display number of finished and non-finished runners
+# TODO: use CSS for prettifying things
+# TODO: add reports
 
 
 def display_seconds(seconds):
