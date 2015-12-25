@@ -1,0 +1,28 @@
+{% extends "_main.html" %}
+
+{% block content %}
+
+<h2>L&auml;fer l&ouml;schen</h2>
+
+<p>
+Soll der folgende L&auml;ufer wirklich gel&ouml;scht werden?
+</p>
+
+<div>
+	<div><b>Startnr.</b> {{ runner.start_no }}</div>
+	<div><b>Name</b> {{ runner.name }}</div>
+	<div><b>Team / Verein</b> {{ runner.team }}</div>
+	<div><b>Geschlecht</b> {{ runner.gender }}</div>
+	<div><b>Geburtsjahr</b> {{ runner.birth_year }}</div>
+	<div><b>Altersklasse</b> {{ runner.age_class }}</div>
+	<div><b>Zeit</b> {{ runner.time|default("keine", True) }}</div>
+	<div><b>Strecke</b> {{ runner.race }}</div>
+</div>
+
+<form method="post">
+	<div>
+		<input type="submit" name="submit_yes" value="Ja" />
+		<input type="submit" name="submit_no" value="Nein" />
+	</div>
+</form>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "_main.html" %}
+
+{% block content %}
+<h2>Volkslauf &raquo;{{ event.title }}&laquo;</h2>
+
+<div>
+	<div>Jahr: {{ event.year }}</div>
+	<div>Anzahl L&auml;ufer: {{ event.num_runners() }}</div>
+	<div>N&auml;chste Startnr. {{ event.next_start_no }}</div>
+	<div>(<a href="/event/delete/{{ event.key.urlsafe() }}">Lauf l&ouml;schen</a>)</div>
+	<div>(<a href="/event/update/{{ event.key.urlsafe() }}">Lauf bearbeiten</a>)</div>
+</div>
+
+<div>
+	<a href="/runner/{{ event.key.urlsafe() }}/create">Neuer L&auml;ufer</a>
+</div>
+
+<form action="/runner/{{ event.key.urlsafe() }}/finished" method="post">
+	<div>
+		<label for="start_no">Startnr.</label>
+		<input id="start_no" name="start_no" />
+
+		<label for="time">Zeit [mm:ss], z.B. 120:33</label>
+		<input id="time" name="time" />
+
+		<input type="submit" value="Eintragen" />
+	</div>
+</form>
+
+<table id="runner_table">
+	<thead><tr>
+		<th>Startnr.</th>
+		<th>Name</th>
+		<th>Team</th>
+		<th>Geschlecht</th>
+		<th>Geburtsjahr</th>
+		<th>Alterklasse</th>
+		<th>Strecke</th>
+		<th>Zeit</th>
+		<th>Operation</th>
+	</tr></thead>
+	<tbody>
+		{% for runner in event.all_runners() %}
+		<tr>
+			<td>{{ runner.start_no }}</td>
+			<td>{{ runner.name }}</td>
+			<td>{{ runner.team|default('-', True) }}</td>
+			<td>{{ 'm' if runner.gender == 'male' else 'w' }}</td>
+			<td>{{ runner.birth_year }}</td>
+			<td>{{ runner.age_class }}</td>
+			<td>{{ runner.race }}</td>
+			<td>{{ runner.time|display_seconds|default('-', True) }}</td>
+			<td>
+				<a href="/runner/{{ event.key.urlsafe() }}/delete/{{ runner.key.urlsafe() }}">l&ouml;schen</a>
+				<a href="/runner/{{ event.key.urlsafe() }}/update/{{ runner.key.urlsafe() }}">bearbeiten</a>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

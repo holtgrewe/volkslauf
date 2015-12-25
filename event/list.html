@@ -1,0 +1,20 @@
+{% extends "_main.html" %}
+
+{% block content %}
+<h2>Liste Volksl&auml;ufe</h2>
+
+<div>
+	<div>Anzahl: {{ events|length }}</div>
+	<div><a href="/event/create">Volkslauf erstellen</a></div>
+</div>
+
+<ul>
+	{% for event in events %}
+	<li>
+		<a href="/event/view/{{ event.key.urlsafe() }}">{{ event.title }}</a>
+		(<a href="/event/delete/{{ event.key.urlsafe() }}">l&ouml;schen</a>)
+	</li>
+	{% endfor %}
+</ul>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "_main.html" %}
+
+{% block content %}
+<h2>Volkslauf l&ouml;schen</h2>
+
+<p>
+Willst du den folgenden Lauf wirklich l&ouml;schen?
+</p>
+
+<div>
+	<div><b>Titel</b> {{ event.title }}</div>
+	<div><b>Jahr</b> {{ event.year }}</div>
+</div>
+
+<form method="post">
+	<div>
+		<input type="submit" name="submit_yes" value="Ja" />
+		<input type="submit" name="submit_no" value="Nein" />
+	</div>
+</form>
+{% endblock %}

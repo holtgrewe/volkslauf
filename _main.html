@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+{% block header %}
+<title>Volkslauf Verwaltung</title>
+
+<script src="/static/js/jquery-2.1.4.min.js"></script>
+{% endblock %}
+</head>
+<body>
+    <div id="header">
+		<div id="go_home">
+			<a href="/">Anfang</a>
+		</div>
+        <div id="user_login">
+            <span id="logged_in_as">Eingeloggt als {{ user }}</span> |
+            <span id="logout_url"><a href="{{ logout_url }}">logout</a></span>
+        </div>
+    </div>
+
+{% block content %}
+<p>Placeholder content</p>
+{% endblock %}
+
+</body>
+</html>

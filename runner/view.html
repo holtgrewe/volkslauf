@@ -1,0 +1,38 @@
+{% extends "_main.html" %}
+
+{% block content %}
+<h2>L&auml;ufer betrachten</h2>
+
+<p>In Lauf &raquo;{{ event.title }}&laquo; ({{ event.year }})</p>
+
+<dl>
+	<dt>Startnr.</dt>
+	<dd>{{ runner.start_no }}</dd>
+
+	<dt>Name</dt>
+	<dd>{{ runner.name }}</dd>
+
+	<dt>Team / Verein</dt>
+	<dd>{{ runner.team|default("", True) }}</dd>
+
+	<dt>Geburtsjahr</dt>
+	<dd>{{ runner.birth_year }}</dd>
+
+	<dt>Geschlecht</dt>
+	<dd>{{ runner.gender }}</dd>
+
+	<dt>Altersklasse</dt>
+	<dd>{{ runner.age_class }}</dd>
+
+	<dt>Strecke</dt>
+	<dd>{{ runner.race }}</dd>
+
+	<dt>Zeit</dt>
+	<dd>{{ runner.time|format_seconds|default("keine", True) }}</dd>
+</dl>
+
+<p>
+Zur&uuml;ck zu <a href="/event/view/{{ event.key.urlsafe() }}">{{ event.title }}</a>
+</p>
+
+{% endblock %}

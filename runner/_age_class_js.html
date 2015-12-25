@@ -1,0 +1,67 @@
+<script type="text/javascript">
+/* Update age class from male/female value
+ */
+function updateAgeClass() {
+    var gender = "W";
+    if ($('#gender_male').prop('checked'))
+        gender = "M";
+
+    var birth_year = parseInt($('#birth_year').val());
+    var event_year = parseInt($('#event_year').val());
+    var age = event_year - birth_year;
+
+    var result = "";
+
+    if (age < 16) {
+        result = gender + "S ";
+        if (age <= 9)
+            result += "D";
+        else if (age <= 11)
+            result += "C";
+        else if (age <= 13)
+            result += "B";
+        else if (age <= 15)
+            result += "A";
+    } else if (age < 20) {
+        result = gender + "JG ";
+
+        if (age <= 17)
+            result += "B";
+        else if (age <= 19)
+            result += "A";
+    } else {
+        result = "L" + gender;
+
+        if (age <= 29)
+            result += "20";
+        else if (age <= 34)
+            result += "30";
+        else if (age <= 39)
+            result += "35";
+        else if (age <= 44)
+            result += "40";
+        else if (age <= 49)
+            result += "45";
+        else if (age <= 54)
+            result += "50";
+        else if (age <= 59)
+            result += "55";
+        else if (age <= 64)
+            result += "60";
+        else if (age <= 69)
+            result += "65";
+        else
+            result += "70";
+    }
+
+    $('#age_class').val(result);
+}
+
+// Execute on page load
+$(function () {
+    updateAgeClass();
+    $("#gender_female").change(updateAgeClass);
+    $("#gender_male").change(updateAgeClass);
+    $("#birth_year").change(updateAgeClass);
+});
+</script>
