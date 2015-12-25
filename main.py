@@ -12,7 +12,7 @@ from google.appengine.ext import ndb
 import jinja2
 import webapp2
 
-# TODO: input validation, non-duplicate starting no
+# TODO: input validation, non-duplicate starting no, use https://pypi.python.org/pypi/schema
 # TODO: transactions
 # TODO: display number of finished and non-finished runners
 # TODO: use CSS for prettifying things
