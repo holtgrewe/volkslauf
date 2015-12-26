@@ -30,12 +30,8 @@ REGEX_RACE = r'^(6km|12km)$'
 # Regex to use for male/female
 REGEX_GENDER = r'^(male|female)$'
 
-# TODO: input validation, non-duplicate starting no, use https://pypi.python.org/pypi/schema
-# German errors
-# TODO: transactions
-# TODO: display number of finished and non-finished runners
+# TODO: German error messages
 # TODO: use CSS for prettifying things
-# TODO: add reports
 
 
 def display_seconds(seconds):
@@ -112,6 +108,9 @@ class Event(ndb.Model):
     def num_runners(self):
         return self.all_runners().count()
 
+    def num_missing(self):
+        return len([r for r in self.all_runners() if not r.time])
+
 
 class RunnerFormEncodeState(object):
     """State used for the RunnerForm
@@ -168,7 +167,7 @@ class Runner(ndb.Model):
     gender = ndb.StringProperty(indexed=False)
     birth_year = ndb.IntegerProperty(indexed=False)
     age_class = ndb.StringProperty(indexed=False)
-    time = ndb.IntegerProperty(indexed=False)
+    time = ndb.IntegerProperty(indexed=True)
     race = ndb.StringProperty(indexed=False)
 
     def _pre_put_hook(self):
@@ -341,7 +340,8 @@ class EventViewHandler(BaseHandler):
 
     def get(self, event_key):
         event = ndb.Key(urlsafe=event_key).get()
-        self._render('event/view.html', {'event': event})
+        self._render('event/view.html',
+                     {'event': event, 'num_missing': event.num_missing()})
 
 
 class EventDeleteHandler(BaseHandler):
@@ -358,6 +358,22 @@ class EventDeleteHandler(BaseHandler):
             self.redirect('/event/list')
         else:
             self.redirect('/event/view/{}'.format(event_key))
+
+
+class EventReportHandler(BaseHandler):
+    """Handler for generating a report"""
+    # TODO: implement me!
+
+    def get(self, event_key, kind):
+        pass
+
+
+class EventExportHandler(BaseHandler):
+    """Handler for exporting an event"""
+    # TODO: implement me!
+
+    def get(self, event_key, file_type):
+        pass
 
 
 class RunnerCreateHandler(BaseHandler):
@@ -535,6 +551,8 @@ ROUTE_LIST = [
     ('/event/view/<event_key>', EventViewHandler),
     ('/event/update/<event_key>', EventUpdateHandler),
     ('/event/delete/<event_key>', EventDeleteHandler),
+    ('/event/<event_key>/report/<type>', EventReportHandler),
+    ('/event/<event_key>/export/<type>', EventExportHandler),
     ('/runner/<event_key>/create', RunnerCreateHandler),
     ('/runner/<event_key>/update/<runner_key>', RunnerUpdateHandler),
     ('/runner/<event_key>/view/<runner_key>', RunnerViewHandler),

@@ -5,7 +5,7 @@
 
 <div>
 	<div>Jahr: {{ event.year }}</div>
-	<div>Anzahl L&auml;ufer: {{ event.num_runners() }}</div>
+    <div>Anzahl L&auml;ufer: {{ event.num_runners() }} (nicht im Ziel: {{ num_missing }})</div>
 	<div>N&auml;chste Startnr. {{ event.next_start_no }}</div>
 	<div>(<a href="/event/delete/{{ event.key.urlsafe() }}">Lauf l&ouml;schen</a>)</div>
 	<div>(<a href="/event/update/{{ event.key.urlsafe() }}">Lauf bearbeiten</a>)</div>
@@ -91,4 +91,11 @@
     </ul>
 </div>
 
+<div id="report_menu">
+    <h3>Exportieren</h3>
+    <ul>
+        <li>als <a href="/event/{{ event.key.urlsafe() }}/export/csv">CSV</a></li>
+        <li>als <a href="/event/{{ event.key.urlsafe() }}/export/xls">Excel</a></li>
+    </ul>
+</div>
 {% endblock %}
