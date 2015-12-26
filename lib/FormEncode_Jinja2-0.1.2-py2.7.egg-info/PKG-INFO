@@ -1,0 +1,49 @@
+Metadata-Version: 1.1
+Name: FormEncode-Jinja2
+Version: 0.1.2
+Summary: A Jinja2 extension for filling forms via FormEncode
+Home-page: https://github.com/Kroisse/FormEncode-Jinja2
+Author: Eunchong Yu
+Author-email: kroisse@gmail.com
+License: MIT License
+Description: FormEncode-Jinja2
+        =================
+        
+        .. image:: https://travis-ci.org/Kroisse/FormEncode-Jinja2.png?branch=master
+          :alt: Build Status
+          :target: https://travis-ci.org/Kroisse/FormEncode-Jinja2
+        
+        FormEncode-Jinja2 is a `Jinja2`_ extension for filling HTML forms via `FormEncode`_.
+        
+        You can install it from `PyPI`_::
+        
+           $ pip install FormEncode-Jinja2  # or
+           $ easy_install FormEncode-Jinja2
+        
+        .. _Jinja2: http://jinja.pocoo.org/
+        .. _FormEncode: http://www.formencode.org/
+        .. _PyPI: https://pypi.python.org/pypi/FormEncode-Jinja2
+        
+        
+        License
+        -------
+        
+        Distributed under `MIT license <http://kroisse.mit-license.org/>`_.
+        See also ``LICENSE`` file.
+        
+        Written by `Eunchong Yu <http://krois.se/>`_.
+        
+Keywords: html
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2 :: Only
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
