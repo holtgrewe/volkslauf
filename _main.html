@@ -5,10 +5,24 @@
 <title>Volkslauf Verwaltung</title>
 
 <script src="/static/js/jquery-2.1.4.min.js"></script>
+
+<style type="text/css">
+#header {
+    padding-left: 100px;
+    height: 100px;
+    background-image: url("/static/img/runner.png");
+    background-repeat: no-repeat;
+    background-position: top left;
+}
+</style>
+
 {% endblock %}
 </head>
 <body>
     <div id="header">
+        <div id="program_title">
+            <strong>Sportfreunde Lotte Volkslaufverwaltung</strong>
+        </div>
 		<div id="go_home">
 			<a href="/">Anfang</a>
 		</div>
@@ -16,6 +30,14 @@
             <span id="logged_in_as">Eingeloggt als {{ user }}</span> |
             <span id="logout_url"><a href="{{ logout_url }}">logout</a></span>
         </div>
+    </div>
+    <div id="flashes">
+        {% for flash, _ in flash_info %}
+        <div class="flash_info">{{ flash }}</div>
+        {% endfor %}
+        {% for flash, _ in flash_error %}
+        <div class="flash_error">{{ flash }}</div>
+        {% endfor %}
     </div>
 
 {% block content %}

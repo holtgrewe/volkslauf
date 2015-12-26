@@ -15,17 +15,7 @@
 	<a href="/runner/{{ event.key.urlsafe() }}/create">Neuer L&auml;ufer</a>
 </div>
 
-<form action="/runner/{{ event.key.urlsafe() }}/finished" method="post">
-	<div>
-		<label for="start_no">Startnr.</label>
-		<input id="start_no" name="start_no" />
-
-		<label for="time">Zeit [mm:ss], z.B. 120:33</label>
-		<input id="time" name="time" />
-
-		<input type="submit" value="Eintragen" />
-	</div>
-</form>
+{% include "event/_finished_form.html" %}
 
 <table id="runner_table">
 	<thead><tr>
@@ -58,5 +48,47 @@
 		{% endfor %}
 	</tbody>
 </table>
+
+<div id="report_menu">
+    <h3>Drucken</h3>
+    <ul>
+        <li>
+            Urkunden
+            (<a href="/event/{{ event.key.urlsafe() }}/report/certificates">alle</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/certificates?race=6km">6km</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/certificates?race=12km">12km</a>)
+        </li>
+        <li>
+            Starterlisten nach Startnr.
+            (<a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=start_no">alle</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=start_no&race=6km">6km</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=start_no&race=12km">12km</a>)
+        </li>
+        <li>
+            Starterlisten alphabetisch
+            (<a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=name">alle</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=name&race=6km">6km</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=name&race=12km">12km</a>)
+        </li>
+        <li>
+            Zieleinlauf nach Strecke
+            (<a href="/event/{{ event.key.urlsafe() }}/report/finished">alle</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/finished?race=6km">6km</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/finished?race=12km">12km</a>)
+        </li>
+        <li>
+            Zieleinlauf nach Strecke, Geschlecht
+            (<a href="/event/{{ event.key.urlsafe() }}/report/finished?by=gender">alle</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/finished?race=6km&by=gender">6km</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/finished?race=12km&by=gender">12km</a>)
+        </li>
+        <li>
+            Zieleinlauf nach Strecke, Geschlecht, Altersklasse
+            (<a href="/event/{{ event.key.urlsafe() }}/report/finished?by=gender,age_class">alle</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/finished?race=6km&by=gender,age_class">6km</a>
+            <a href="/event/{{ event.key.urlsafe() }}/report/finished?race=12km&by=gender,age_class">12km</a>)
+        </li>
+    </ul>
+</div>
 
 {% endblock %}

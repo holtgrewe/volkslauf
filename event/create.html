@@ -3,24 +3,10 @@
 {% block content %}
 <h2>Volkslauf erstellen</h2>
 
+{%- formfill event with errors %}
 <form method="post">
-<div>
-	<label>Name</label>
-	<input type="text" name="title" value="{{ event.title|default("", True) }}" />
-	<div>Z.B. "Volkslauf 2015"</div>
-</div>
 
-<div>
-	<label>Jahr</label>
-	<input type="text" name="year" value="{{ event.year|default("", True) }}" />
-	<div>Z.B. "2015"</div>
-</div>
-
-<div>
-	<label>N&auml;chste Startnr.</label>
-	<input type="text" name="next_start_no" value="{{ event.next_start_no|default("", True) }}" />
-	<div>Z.B. "203"</div>
-</div>
+{% include "event/_form.html" %}
 
 <div>
 	<input type="submit" name="submit_create" value="Erstellen" />
@@ -28,4 +14,5 @@
 </div>
 
 </form>
+{% endformfill %}
 {% endblock %}

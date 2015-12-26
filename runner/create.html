@@ -10,58 +10,12 @@
 
 <p>In Lauf &raquo;{{ event.title }}&laquo; ({{ event.year }})</p>
 
+<input type="hidden" name="event_year" value="{{ event.year }}" />
+
+{%- formfill runner with errors %}
 <form method="post">
-<input type="hidden" id="event_year" value="{{ event.year }}" />
 
-<div>
-	<label>Startnr.</label>
-	<input type="text" name="start_no" value="{{ runner.start_no|default("", True) }}" />
-	<div>Z.B. "504"</div>
-</div>
-
-<div>
-	<label>Name</label>
-	<input type="text" name="name" value="{{ runner.name|default("", True) }}" />
-	<div>Z.B. "Max Mustermann"</div>
-</div>
-
-<div>
-	<label>Team / Verein</label>
-	<input type="text" name="team" value="{{ runner.team|default("", True) }}" />
-	<div>Z.B. "SF Lotte"</div>
-</div>
-
-<div>
-	<label>Geburtsjahr</label>
-	<input type="text" id="birth_year" name="birth_year" value="{{ runner.birth_year|default("", True) }}" />
-	<div>Z.B. "1980"</div>
-</div>
-
-<div>
-	<label>Geschlecht</label>
-
-	<label for="gender_female">weiblich</label>
-	<input type="radio" id="gender_female" name="gender" value="female" {% if runner.gender == "female" %}checked{% endif %} />
-
-	<label for="gender_male">m&auml;nnlich</label>
-	<input type="radio" id="gender_male" name="gender" value="male" {% if runner.gender == "male" %}checked{% endif %} />
-</div>
-
-<div>
-	<label>Altersklasse</label>
-	<input type="text" id="age_class" name="age_class" value="{{ runner.age_class|default("", True) }}" disabled />
-	<div>Z.B. "W35"</div>
-</div>
-
-<div>
-	<label>Strecke</label>
-
-	<label for="race_6km">6&nbsp;km</label>
-	<input type="radio" id="race_6km" name="race" value="6km" {% if runner.race == "6km" %}checked{% endif %} />
-
-	<label for="race_12km">12&nbsp;km</label>
-	<input type="radio" id="race_12km" name="race" value="12km" {% if runner.race == "12km" %}checked {% endif %} />
-</div>
+{% include "runner/_form.html" %}
 
 <div>
 	<input type="submit" name="submit_create" value="Erstellen" />
@@ -69,4 +23,5 @@
 </div>
 
 </form>
+{% endformfill %}
 {% endblock %}

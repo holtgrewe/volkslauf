@@ -1,0 +1,15 @@
+{%- formfill vals with errors %}
+<form action="/runner/{{ event.key.urlsafe() }}/finished" method="post">
+	<div>
+		<label for="start_no">Startnr.</label>
+		<input id="start_no" name="start_no" />
+        <form:error name="start_no" />
+
+		<label for="time">Zeit [mm:ss], z.B. 120:33</label>
+		<input id="time" name="time" />
+        <form:error name="time" />
+
+		<input type="submit" value="Eintragen" />
+	</div>
+</form>
+{% endformfill %}

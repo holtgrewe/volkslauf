@@ -49,6 +49,7 @@ Temporary Items
 # Vim stuff
 .*.sw?
 _.sw?
+*~
 
 # Python stuff
 *.pyc
