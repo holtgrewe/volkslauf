@@ -1,36 +1,103 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-{% block header %}
-<title>Volkslauf Verwaltung</title>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="/static/js/jquery-2.1.4.min.js"></script>
+        {% block header %}
+        <title>Volkslauf Verwaltung</title>
 
-<style type="text/css">
-#header {
-    padding-left: 100px;
-    height: 100px;
-    background-image: url("/static/img/runner.png");
-    background-repeat: no-repeat;
-    background-position: top left;
-}
-</style>
+        <script src="/static/js/jquery-2.1.4.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-{% endblock %}
-</head>
-<body>
-    <div id="header">
-        <div id="program_title">
-            <strong>Sportfreunde Lotte Volkslaufverwaltung</strong>
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+        <style type="text/css">
+        /*
+         * Base structure
+         */
+
+        /* Move down content because we have a fixed navbar that is 50px tall */
+        body {
+          padding-top: 50px;
+        }
+
+
+        /*
+         * Global add-ons
+         */
+
+        .sub-header {
+          padding-bottom: 10px;
+          border-bottom: 1px solid #eee;
+        }
+
+        /*
+         * Top navigation
+         * Hide default border to remove 1px line.
+         */
+        .navbar-fixed-top {
+          border: 0;
+        }
+
+        /*
+         * Main content
+         */
+
+        .main {
+          padding: 20px;
+        }
+        @media (min-width: 768px) {
+          .main {
+            padding-right: 40px;
+            padding-left: 40px;
+          }
+        }
+        .main .page-header {
+          margin-top: 0;
+        }
+        </style>
+
+        {% endblock %}
+    </head>
+    <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Navigation an/aus</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Volkslauf Teilnehmerverwaltung</a>
         </div>
-		<div id="go_home">
-			<a href="/">Anfang</a>
-		</div>
-        <div id="user_login">
-            <span id="logged_in_as">Eingeloggt als {{ user }}</span> |
-            <span id="logout_url"><a href="{{ logout_url }}">logout</a></span>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Einstellungen</a></li>
+            <li><a href="#">Hilfe</a></li>
+            <li id="logged_in_as"><a href="#">Benutzer: {{ user }}</a></li>
+            <li><a href="#">Ausloggen</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Suchen...">
+          </form>
         </div>
-    </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+    {% if flash_info or flash_error %}
     <div id="flashes">
         {% for flash, _ in flash_info %}
         <div class="flash_info">{{ flash }}</div>
@@ -39,10 +106,13 @@
         <div class="flash_error">{{ flash }}</div>
         {% endfor %}
     </div>
+    {% endif %}
 
 {% block content %}
 <p>Placeholder content</p>
 {% endblock %}
-
-</body>
+        </div>
+      </div>
+    </div>
+    </body>
 </html>
