@@ -1,15 +1,19 @@
 {%- formfill vals with errors %}
-<form action="/runner/{{ event.key.urlsafe() }}/finished" method="post">
-	<div>
+<div class="panel panel-default"><div class="panel-body">
+<form action="/runner/{{ event.key.urlsafe() }}/finished" method="post" class="form-inline">
+    <div class="form-group">
 		<label for="start_no">Startnr.</label>
-		<input id="start_no" name="start_no" />
+		<input id="start_no" name="start_no" size="2" class="form-control" placeholder="123" />
         <form:error name="start_no" />
+    </div>
 
-		<label for="time">Zeit [mm:ss], z.B. 120:33</label>
-		<input id="time" name="time" />
+    <div class="form-group">
+		<label for="time">Zeit [mm:ss]</label>
+		<input id="time" name="time" size="3" class="form-control" placeholder="120:33" />
         <form:error name="time" />
 
-		<input type="submit" value="Eintragen" />
+		<button type="submit" class="btn btn-default">Zieleinlauf eintragen</button>
 	</div>
 </form>
+</div></div>
 {% endformfill %}

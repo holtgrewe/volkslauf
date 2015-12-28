@@ -1,21 +1,29 @@
 {% extends "_main.html" %}
 
 {% block content %}
-<h2>Volkslauf l&ouml;schen</h2>
+<h1 class="page-header">Volkslauf l&ouml;schen</h1>
+
+<form method="post">
 
 <p>
 Willst du den folgenden Lauf wirklich l&ouml;schen?
 </p>
 
-<div>
-	<div><b>Titel</b> {{ event.title }}</div>
-	<div><b>Jahr</b> {{ event.year }}</div>
-</div>
+<dl class="dl-horizontal">
+	<dt>Titel</dt>
+    <dd>{{ event.title }}</dd>
 
-<form method="post">
+	<dt>Jahr</dt>
+    <dd>{{ event.year }}</dd>
+</dl>
+
 	<div>
-		<input type="submit" name="submit_yes" value="Ja" />
-		<input type="submit" name="submit_no" value="Nein" />
+	    <button class="btn btn-danger" type="submit" name="submit_yes" value="yes">
+	    Ja, l&ouml;schen
+	    </button>
+	    <button class="btn btn-default" type="submit" name="submit_no" value="no">
+	    Nein, abbrechen
+	    </button>
 	</div>
 </form>
 {% endblock %}

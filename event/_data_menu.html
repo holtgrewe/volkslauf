@@ -1,0 +1,73 @@
+<div class="panel panel-default"><div class="panel-body">
+    <strong>Drucken</strong>
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span title="bearbeiten" class="glyphicon glyphicon-certificate" aria-hidden="true"></span>
+            Urkunden <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/certificates">alle</a</li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/certificates?race=6km">6 km</a</li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/certificates?race=12km">12 km</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span title="bearbeiten" class="glyphicon glyphicon-user" aria-hidden="true"></span>
+            Starterliste <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">Starterlisten nach Startnr.</li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=start_no">alle</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=start_no&race=6km">6 km</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=start_no&race=12km">12 km</a></li>
+            <li class="divider" role="separator"></li>
+            <li class="dropdown-header">Starterlisten alphabetisch</li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=name">alle</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=name&race=6km">6 km</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/starter_lists?order=name&race=12km">12 km</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span title="bearbeiten" class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+            Zieleinlauf <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">nach Strecke</li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished">alle</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished?race=6km">6 km</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished?race=12km">12 km</a></li>
+            <li class="divider" role="separator"></li>
+            <li class="dropdown-header">nach Strecke, Geschlecht</li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished?by=gender">alle</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished?race=6km&by=gender">6 km</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished?race=12km&by=gender">12 km</a></li>
+            <li class="divider" role="separator"></li>
+            <li class="dropdown-header">nach Strecke, Geschlecht, Altersklasse</li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished?by=gender,age_class">alle</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished?race=6km&by=gender,age_class">6 km</a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/report/finished?race=12km&by=gender,age_class">12 km</a></li>
+        </ul>
+    </div>
+
+    <strong>Daten</strong>
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span title="bearbeiten" class="glyphicon glyphicon-save" aria-hidden="true"></span>
+            Export<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="/event/{{ event.key.urlsafe() }}/export/csv">
+                CSV
+                </a></li>
+            <li><a href="/event/{{ event.key.urlsafe() }}/export/xls">
+                Excel
+            </a></li>
+        </ul>
+    </div>
+</div></div>

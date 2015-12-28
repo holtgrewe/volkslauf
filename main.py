@@ -111,6 +111,15 @@ class Event(ndb.Model):
     def num_missing(self):
         return len([r for r in self.all_runners() if not r.time])
 
+    def num_finished(self):
+        return len([r for r in self.all_runners() if r.time])
+
+    def percent_done(self):
+        if not self.num_runners():
+            return 0
+        else:
+            return int(100 * self.num_finished() / self.num_runners())
+
 
 class RunnerFormEncodeState(object):
     """State used for the RunnerForm
@@ -301,6 +310,9 @@ class EventCreateHandler(BaseHandler):
             event = Event(parent=organization_key(), **form_result)
             event_key = event.put()
             self.redirect('/event/view/{}'.format(event_key.urlsafe()))
+            # Send success method into flash
+            tpl = 'Der Lauf {} wurde erfolgreich erstellt.'
+            self.session.add_flash(tpl.format(event.title), key='info')
         except formencode.Invalid, e:
             self._render('event/create.html',
                          {'event': e.value, 'errors': e.error_dict})
@@ -341,7 +353,10 @@ class EventViewHandler(BaseHandler):
     def get(self, event_key):
         event = ndb.Key(urlsafe=event_key).get()
         self._render('event/view.html',
-                     {'event': event, 'num_missing': event.num_missing()})
+                     {'event': event,
+                      'percent_done': event.percent_done(),
+                      'num_missing': event.num_missing(),
+                      'num_finished': event.num_finished()})
 
 
 class EventDeleteHandler(BaseHandler):
@@ -354,8 +369,13 @@ class EventDeleteHandler(BaseHandler):
     def post(self, event_key):
         if self.request.get('submit_yes'):
             event_key = ndb.Key(urlsafe=event_key)
-            event_key.get().delete()
+            event = event_key.get()
+            msg = 'Der Lauf {} wurde erfolgreich geloescht.'.format(
+                    event.title)
+            event_key.delete()
             self.redirect('/event/list')
+            # Send success method into flash
+            self.session.add_flash(msg, key='info')
         else:
             self.redirect('/event/view/{}'.format(event_key))
 
