@@ -6,20 +6,20 @@
 {% endblock %}
 
 {% block content %}
-<h2>L&auml;ufer bearbeiten</h2>
+<h2>L&auml;ufer erstellen</h2>
 
 <p>In Lauf &raquo;{{ event.title }}&laquo; ({{ event.year }})</p>
 
 <input type="hidden" name="event_year" value="{{ event.year }}" />
 
 {%- formfill runner with errors %}
-<form method="post" class="form-horizontal">
+<form method="post">
 
 {% include "runner/_form.html" %}
 
 <div>
     <button class="btn btn-success" type="submit" name="submit_update" value="update">
-        L&auml;fer erstellen
+        L&auml;ufer erstellen
     </button>
     <button class="btn btn-default" type="submit" name="submit_cancel" value="cancel">
         Abbrechen

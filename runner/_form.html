@@ -1,58 +1,68 @@
 <div class="form-group">
-    <label class="col-sm-2 control-label">Startnr.</label>
-    <input type="text" name="start_no" />
+    <label class="control-label">Startnr.</label>
+    <input class="form-control" type="text" name="start_no" />
     <form:error name="start_no" />
     <div>Z.B. "504"</div>
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label">Name</label>
-    <input type="text" name="name" />
+    <label class="control-label">Name</label>
+    <input class="form-control" type="text" name="name" />
     <form:error name="start_no" />
     <div>Z.B. "Max Mustermann"</div>
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label">Team / Verein</label>
-    <input type="text" name="team" />
+    <label class="control-label">Team / Verein</label>
+    <input class="form-control" type="text" name="team" />
     <form:error name="start_no" />
     <div>Z.B. "SF Lotte"</div>
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label">Geburtsjahr</label>
-    <input type="text" id="birth_year" name="birth_year" />
+    <label class="control-label">Geburtsjahr</label>
+    <input class="form-control" type="text" id="birth_year" name="birth_year" />
     <form:error name="birth_year" />
     <div>Z.B. "1980"</div>
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label">Geschlecht</label>
+    <label class="control-label">Geschlecht</label>
+    <div class="radio">
+        <label>
+            <input type="radio" id="gender_female" name="gender" value="female" />
+            weiblich
+        </label>
 
-    <input type="radio" id="gender_female" name="gender" value="female" />
-    <label for="gender_female">weiblich</label>
-
-    <input type="radio" id="gender_male" name="gender" value="male" />
-    <label for="gender_male">m&auml;nnlich</label>
-    
-    <form:error name="gender" />
+        <label>
+            <input type="radio" id="gender_male" name="gender" value="male" />
+            m&auml;nnlich
+        </label>
+        
+        <form:error name="gender" />
+    </div>
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label">Altersklasse</label>
-    <input type="text" id="age_class" name="age_class" />
+    <label class="control-label">Altersklasse</label>
+    <input class="form-control" type="text" id="age_class" name="age_class" />
     <form:error name="age_class" />
     <div>Z.B. "W35"</div>
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label">Strecke</label>
+    <label class="control-label">Strecke</label>
+    <div class="radio">
+        <label>
+            <input type="radio" id="race_6km" name="race" value="6km" />
+            6&nbsp;km
+        </label>
 
-    <input type="radio" id="race_6km" name="race" value="6km" />
-    <label for="race_6km">6&nbsp;km</label>
+        <label>
+            <input type="radio" id="race_12km" name="race" value="12km" />
+            12&nbsp;km
+        </label>
 
-    <input type="radio" id="race_12km" name="race" value="12km" />
-    <label for="race_12km">12&nbsp;km</label>
-
-    <form:error name="race" />
+        <form:error name="race" />
+    </div>
 </div>
