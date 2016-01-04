@@ -2,8 +2,11 @@
 
 from __future__ import division, print_function
 
+import StringIO
+import csv
 import logging
 import os.path
+import textwrap
 import urllib
 
 from google.appengine.api import users
@@ -16,10 +19,28 @@ from webapp2_extras import sessions
 import formencode
 import formencode_jinja2
 
+
+class VolkslaufException(Exception):
+    pass
+
+
+class MissingConfiguration(VolkslaufException):
+    pass
+
+
+def read_session_secret():
+    try:
+        path = os.path.join(os.path.dirname(__file__), '_session_key')
+        with open(path, 'rb') as f:
+            return f.read()
+    except IOError, e:
+        raise MissingConfiguration(
+                'Configuration file {} is missing!'.format(path), e)
+
+
 CONFIG = {
     'webapp2_extras.sessions': {
-        # TODO: read from config that is not in git
-        'secret_key': 'super-secret-key',
+        'secret_key': read_session_secret(),
     },
 }
 
@@ -29,9 +50,6 @@ REGEX_TIME = r'^(\d+:)?\d+:\d+'
 REGEX_RACE = r'^(6km|12km)$'
 # Regex to use for male/female
 REGEX_GENDER = r'^(male|female)$'
-
-# TODO: German error messages
-# TODO: use CSS for prettifying things
 
 
 def display_seconds(seconds):
@@ -100,6 +118,11 @@ class Event(ndb.Model):
     title = ndb.StringProperty(indexed=False)
     next_start_no = ndb.IntegerProperty()
 
+    @classmethod
+    @ndb.transactional
+    def _pre_delete_hook(klass, key):
+        ndb.delete_multi(Runner.query(ancestor=key).fetch(keys_only=True))
+
     def all_runners(self):
         """Return Query with all Runner objects for this event"""
         return Runner.query(Runner.event == self.key,
@@ -127,14 +150,14 @@ class RunnerFormEncodeState(object):
     Required for pulling the event_key and runner_key through the
     validation code.
     """
-    
+
     def __init__(self, event_key, runner_key=None):
         self.event_key = event_key
         self.runner_key = runner_key
 
 
 class UniqueStartNoValidator(formencode.FancyValidator):
-   
+
     messages = {
         'exists': 'Die Startnr. wurde doppelt vergeben',
     }
@@ -178,6 +201,14 @@ class Runner(ndb.Model):
     age_class = ndb.StringProperty(indexed=False)
     time = ndb.IntegerProperty(indexed=True)
     race = ndb.StringProperty(indexed=False)
+
+    def to_tsv(self, sep='\t'):
+        """Convert to TSV representation"""
+        vals = [self.start_no, self.name, self.team, self.birth_year,
+                self.gender, self.age_class, self.race,
+                display_seconds(self.time)]
+        vals = [v if v is not None else '' for v in vals]
+        return sep.join(map(str, vals)) + '\n'
 
     def _pre_put_hook(self):
         age_class = self._compute_age_class()
@@ -276,9 +307,57 @@ class BaseHandler(webapp2.RequestHandler):
         return vals
 
 
+class EventImportHandler(BaseHandler):
+    """Handler for importing events
+
+    Display an upload from on GET and try to import the TSV file on POST.
+    """
+
+    def get(self):
+        self._render('event/import.html', {})
+
+    def post(self):
+        if not self.request.get('submit_import'):
+            self.redirect('/event/list')
+            return
+
+        event_key = self._import_from_tsv(self.request.get('tsv_file'))
+        self.redirect('/event/view/{}'.format(event_key.urlsafe()))
+
+    @ndb.transactional
+    def _import_from_tsv(self, tsv_text):
+        event = Event(parent=organization_key())
+        f = StringIO.StringIO(str(tsv_text))
+        csvfile = csv.reader(f, delimiter='\t')
+        for row in csvfile:
+            if row[0] == '#title:':
+                event.title = row[1]
+            elif row[0] == '#year:':
+                event.year = int(row[1])
+            elif row[0] == '#next_start_no:':
+                event.next_start_no = int(row[1])
+            elif row[0] == '#start_no':  # header
+                event_key = event.put()
+            else:
+                self._import_row(event_key, row)
+        return event_key
+
+    def _import_row(self, event_key, row):
+        runner = Runner(parent=event_key)
+        runner.event = event_key
+        runner.start_no = int(row[0])
+        runner.name = row[1]
+        runner.team = row[2]
+        runner.birth_year = int(row[3])
+        runner.gender = row[4]
+        runner.race = row[6]
+        runner.time = get_seconds_from_time(row[7])
+        runner.put()
+
+
 class EventListHandler(BaseHandler):
     """Handler for listing all events
-    
+
     This is also used for the start page.
     """
 
@@ -290,7 +369,7 @@ class EventListHandler(BaseHandler):
 
 class EventCreateHandler(BaseHandler):
     """Handler for creating events
-    
+
     Display creation mask on GET and actually create on POST (after validation
     of course).
     """
@@ -320,7 +399,7 @@ class EventCreateHandler(BaseHandler):
 
 class EventUpdateHandler(BaseHandler):
     """Handler for updating events
-    
+
     Display update mask on GET and actually update on POST (after validation
     of course).
     """
@@ -382,7 +461,6 @@ class EventDeleteHandler(BaseHandler):
 
 class EventReportHandler(BaseHandler):
     """Handler for generating a report"""
-    # TODO: implement me!
 
     def get(self, event_key, kind):
         pass
@@ -390,10 +468,35 @@ class EventReportHandler(BaseHandler):
 
 class EventExportHandler(BaseHandler):
     """Handler for exporting an event"""
-    # TODO: implement me!
 
     def get(self, event_key, file_type):
-        pass
+        event_key = ndb.Key(urlsafe=event_key)
+        event = event_key.get()
+
+        if file_type == 'xls':
+            self._export_xls(event)
+        else:
+            self._export_tsv(event)
+
+    def _export_tsv(self, event):
+        self.response.headers['Content-Type'] = 'text/plain'
+        disp = 'attachment; filename={}.tsv'.format(event.key.urlsafe())
+        self.response.headers['Content-Disposition'] = disp
+        tpl = """
+        #title:\t{title}
+        #year:\t{year}
+        #next_start_no:\t{next_start_no}
+        #start_no\tname\tteam\tbirth_year\tgender\tage_class\trace\ttime
+        """
+        tpl = textwrap.dedent(tpl).lstrip()
+        self.response.out.write(tpl.format(
+            title = event.title,
+            year = event.year,
+            next_start_no = event.next_start_no,
+        ))
+        for runner in event.all_runners():
+            self.response.out.write(runner.to_tsv())
+
 
 
 class RunnerCreateHandler(BaseHandler):
@@ -465,7 +568,7 @@ class RunnerUpdateHandler(BaseHandler):
         runner_key = ndb.Key(urlsafe=runner_key)
 
         event_key = ndb.Key(urlsafe=event_key)
-        
+
         try:
             self._update_runner(event_key, runner_key)
             self.redirect('/event/view/{}'.format(event_key.urlsafe()))
@@ -567,12 +670,13 @@ class RunnerFinishedHandler(BaseHandler):
 ROUTE_LIST = [
     ('/', EventListHandler),
     ('/event/list', EventListHandler),
+    ('/event/import', EventImportHandler),
     ('/event/create', EventCreateHandler),
     ('/event/view/<event_key>', EventViewHandler),
     ('/event/update/<event_key>', EventUpdateHandler),
     ('/event/delete/<event_key>', EventDeleteHandler),
-    ('/event/<event_key>/report/<type>', EventReportHandler),
-    ('/event/<event_key>/export/<type>', EventExportHandler),
+    ('/event/<event_key>/report/<file_type>', EventReportHandler),
+    ('/event/<event_key>/export/<file_type>', EventExportHandler),
     ('/runner/<event_key>/create', RunnerCreateHandler),
     ('/runner/<event_key>/update/<runner_key>', RunnerUpdateHandler),
     ('/runner/<event_key>/view/<runner_key>', RunnerViewHandler),

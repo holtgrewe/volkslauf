@@ -1,0 +1,10 @@
+Volkslauf Laeuferverwaltung
+===========================
+
+
+TODO
+----
+
+- time handling suboptimal (should be time and not int, better for display as well)
+- German error messages
+- reports

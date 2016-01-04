@@ -18,6 +18,11 @@ $RECYCLE.BIN/
 *.lnk
 
 # =========================
+# file with secret key
+# =========================
+_session_key
+
+# =========================
 # Operating System Files
 # =========================
 

@@ -1,0 +1,25 @@
+{% extends "_main.html" %}
+
+{% block content %}
+<h1 class="page-header">Lauf importieren</h1>
+
+{%- formfill event with errors %}
+<form method="post" enctype="multipart/form-data">
+
+<div class="form-group">
+    <label for="file-upload">Lauf TSV Datei</label>
+    <input type="file" name="tsv_file" id="file-upload">
+</div>
+
+<div>
+	<button class="btn btn-success" type="submit" name="submit_import" value="create">
+        Lauf Importieren
+	</button>
+	<button class="btn btn-default" type="submit" name="submit_cancel" value="cancel">
+        Abbrechen
+	</button>
+</div>
+
+</form>
+{% endformfill %}
+{% endblock %}

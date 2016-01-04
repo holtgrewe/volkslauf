@@ -18,12 +18,10 @@
 {% include "runner/_form.html" %}
 
 <div class="form-group">
-    <label class="col-sm-2 control-label" for="time">Zeit</label>
-    <div class="col-sm-10">
-        <input class="form-control" type="text" name="time" id="time" />
-        <span class="help-block">Z.B. "2:30"</span>
-        <form:error name="time" />
-    </div>
+    <label class="control-label" for="time">Zeit</label>
+    <input class="form-control" type="text" name="time" id="time" />
+    <span class="help-block">Z.B. "2:30"</span>
+    <form:error name="time" />
 </div>
 
 <div>
