@@ -6,6 +6,7 @@ import StringIO
 import csv
 import logging
 import os.path
+import re
 import textwrap
 import urllib
 
@@ -18,6 +19,61 @@ from webapp2_extras import sessions
 
 import formencode
 import formencode_jinja2
+
+
+# Regex to use for time
+REGEX_TIME = r'^(\d+:)?\d+:\d+'
+# Regex to use race
+REGEX_RACE = r'^(6km|12km)$'
+# Regex to use for male/female
+REGEX_GENDER = r'^(male|female)$'
+
+
+class DurationProperty(ndb.StringProperty):
+    """Base type for [hh:]mm:ss durations"""
+
+    def _validate(self, value):
+        if not re.match(REGEX_TIME, value):
+            raise TypeError('{} does not match [hh:]mm:ss'.format(value))
+
+    def _to_base_type(self, value):
+        return DurationProperty._display_seconds(
+                DurationProperty._get_seconds_from_time(value))
+
+    def _from_base_type(self, value):
+        return value
+
+    @staticmethod
+    def _display_seconds(seconds):
+        """Return string displaying seconds as (hours), minutes and seconds
+        """
+        if seconds is None:
+            return seconds
+
+        tmp = int(seconds)
+        secs = tmp % 60
+        tmp = tmp // 60
+        mins = tmp % 60
+        tmp = tmp // 60
+        hours = tmp
+
+        if hours:
+            return '{:02}:{:02}:{:02}'.format(hours, mins, secs)
+        else:
+            return '00:{:02}:{:02}'.format(mins, secs)
+
+    @staticmethod
+    def _get_seconds_from_time(time_str):
+        if not time_str:
+            return None
+        arr = list(map(int, time_str.split(':', 3)))
+        if len(arr) == 3:
+            seconds = arr[0] * 60 * 60 + arr[1] * 60 + arr[0]
+        elif len(arr) == 2:
+            seconds = arr[0] * 60 + arr[1]
+        else:
+            seconds = arr[0]
+        return seconds
 
 
 class VolkslaufException(Exception):
@@ -44,32 +100,6 @@ CONFIG = {
     },
 }
 
-# Regex to use for time
-REGEX_TIME = r'^(\d+:)?\d+:\d+'
-# Regex to use race
-REGEX_RACE = r'^(6km|12km)$'
-# Regex to use for male/female
-REGEX_GENDER = r'^(male|female)$'
-
-
-def display_seconds(seconds):
-    """Return string displaying seconds as (hours), minutes and seconds
-    """
-    if seconds is None:
-        return seconds
-
-    tmp = int(seconds)
-    secs = tmp % 60
-    tmp = tmp // 60
-    mins = tmp % 60
-    tmp = tmp // 60
-    hours = tmp
-
-    if hours:
-        return '{:02}:{:02}:{:02}'.format(hours, mins, secs)
-    else:
-        return '{:02}:{:02}'.format(mins, secs)
-
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -77,7 +107,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(
                 'formencode_jinja2.formfill'],
     undefined=jinja2.StrictUndefined,
     autoescape=True)
-JINJA_ENVIRONMENT.filters['display_seconds'] = display_seconds
 
 formencode.api.set_stdtranslation(domain='FormEncode', languages=['de'])
 
@@ -199,14 +228,14 @@ class Runner(ndb.Model):
     gender = ndb.StringProperty(indexed=False)
     birth_year = ndb.IntegerProperty(indexed=False)
     age_class = ndb.StringProperty(indexed=False)
-    time = ndb.IntegerProperty(indexed=True)
+    time = DurationProperty(indexed=False)
     race = ndb.StringProperty(indexed=False)
 
     def to_tsv(self, sep='\t'):
         """Convert to TSV representation"""
         vals = [self.start_no, self.name, self.team, self.birth_year,
                 self.gender, self.age_class, self.race,
-                display_seconds(self.time)]
+                self.time]
         vals = [v if v is not None else '' for v in vals]
         return sep.join(map(str, vals)) + '\n'
 
@@ -354,7 +383,7 @@ class EventImportHandler(BaseHandler):
         runner.birth_year = int(row[3])
         runner.gender = row[4]
         runner.race = row[6]
-        runner.time = get_seconds_from_time(row[7])
+        runner.time = row[7]
         runner.put()
 
 
@@ -620,19 +649,6 @@ class RunnerDeleteHandler(BaseHandler):
         self.redirect('/event/view/{}'.format(event_key))
 
 
-def get_seconds_from_time(time_str):
-    if not time_str:
-        return None
-    arr = list(map(int, time_str.split(':', 3)))
-    if len(arr) == 3:
-        seconds = arr[0] * 60 * 60 + arr[1] * 60 + arr[0]
-    elif len(arr) == 2:
-        seconds = arr[0] * 60 + arr[1]
-    else:
-        seconds = arr[0]
-    return seconds
-
-
 class RunnerFinishedHandler(BaseHandler):
     """Handler for a runner finishing"""
 
@@ -656,7 +672,7 @@ class RunnerFinishedHandler(BaseHandler):
                                    ancestor=event_key)
             runner = runners.get()
             if runner:
-                runner.time = get_seconds_from_time(self.request.get('time'))
+                runner.time = self.request.get('time')
                 runner.put()
                 msg = 'Zeit fuerr Laeufer {} gesetzt.'.format(runner.name)
                 self.session.add_flash(msg, key='info')
