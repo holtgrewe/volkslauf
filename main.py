@@ -322,6 +322,9 @@ class EventImportHandler(BaseHandler):
             return
 
         event_key = self._import_from_tsv(self.request.get('tsv_file'))
+        event = event_key.get()
+        tpl = 'Der Lauf {} wurde erfolgreich importiert.'
+        self.session.add_flash(tpl.format(event.title), key='info')
         self.redirect('/event/view/{}'.format(event_key.urlsafe()))
 
     @ndb.transactional

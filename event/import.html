@@ -6,9 +6,17 @@
 {%- formfill event with errors %}
 <form method="post" enctype="multipart/form-data">
 
+<label for="file-upload">Lauf TSV Datei</label>
 <div class="form-group">
-    <label for="file-upload">Lauf TSV Datei</label>
-    <input type="file" name="tsv_file" id="file-upload">
+    <div class="input-group">
+        <span class="input-group-btn">
+            <span class="btn btn-default btn-file">
+                Datei ausw&auml;hlen
+                <input type="file" name="tsv_file" id="file-upload">
+            </span>
+        </span>
+        <input type="text" class="form-control" readonly>
+    </div>
 </div>
 
 <div>
