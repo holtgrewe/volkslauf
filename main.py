@@ -230,7 +230,7 @@ class Runner(ndb.Model):
     birth_year = ndb.IntegerProperty(indexed=False)
     age_class = ndb.StringProperty(indexed=False)
     time = DurationProperty(indexed=False)
-    race = ndb.StringProperty(indexed=False)
+    race = ndb.StringProperty(indexed=True)
 
     def to_tsv(self, sep='\t'):
         """Convert to TSV representation"""
@@ -495,8 +495,35 @@ class EventDeleteHandler(BaseHandler):
 class EventReportHandler(BaseHandler):
     """Handler for generating a report"""
 
-    def get(self, event_key, kind):
-        pass
+    def get(self, event_key, report_type):
+        event_key = ndb.Key(urlsafe=event_key)
+        event = event_key.get()
+        if report_type == 'starter_list':
+            self._get_starter_list(event_key, event)
+
+    def _get_starter_list(self, event_key, event):
+        # Get filter / order from query string
+        race = self.request.get('race')
+        order = self.request.get('order')
+        if race:
+            qry = Runner.query(
+                    Runner.event == event_key and Runner.race == race,
+                    ancestor=event_key)
+        else:
+            qry = Runner.query(Runner.event == event_key,
+                               ancestor=event_key)
+        if order == 'name':
+            qry = qry.order(Runner.name)
+        else:
+            qry = qry.order(Runner.start_no)
+        # Render results 
+        vals = {
+            'event': event,
+            'race': race,
+            'order': order,
+            'runners': qry,
+        }
+        self._render('/event/report_starter_list.html', vals)
 
 
 class EventExportHandler(BaseHandler):
@@ -719,7 +746,7 @@ ROUTE_LIST = [
     ('/event/view/<event_key>', EventViewHandler),
     ('/event/update/<event_key>', EventUpdateHandler),
     ('/event/delete/<event_key>', EventDeleteHandler),
-    ('/event/<event_key>/report/<file_type>', EventReportHandler),
+    ('/event/<event_key>/report/<report_type>', EventReportHandler),
     ('/event/<event_key>/export/<file_type>', EventExportHandler),
     ('/runner/<event_key>/create', RunnerCreateHandler),
     ('/runner/<event_key>/update/<runner_key>', RunnerUpdateHandler),

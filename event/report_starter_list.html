@@ -1,0 +1,34 @@
+{% extends "_main.html" %}
+
+{% block content %}
+{% if race == "6km" %}
+    <h1>Starterliste {{ event.title }} (6 km)</h1>
+{% elif race == "12km" %}
+    <h1>Starterliste {{ event.title }} (12 km)</h1>
+{% else %}
+    <h1>Starterliste {{ event.title }}</h1>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <td>Startnr.</td>
+            <td>Name</td>
+            <td>Team</td>
+            <td>Geschlecht</td>
+            <td>Alterklasse</td>
+        </tr>
+    <thead>
+    <tbody>
+    {% for runner in runners %}
+        <tr>
+            <td>{{ runner.start_no }}</td>
+            <td>{{ runner.name }}</td>
+            <td>{{ runner.team }}</td>
+            <td>{% if runner.gender == "male" %}m{% else %}w{% endif %}</td>
+            <td>{{ runner.age_class }}</td>
+        </tr>
+    {% endfor %}
+</ul>
+
+{% endblock %}

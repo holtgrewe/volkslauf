@@ -14,4 +14,16 @@ indexes:
   ancestor: yes
   properties:
   - name: event
+  - name: name
+
+- kind: Runner
+  ancestor: yes
+  properties:
+  - name: event
+  - name: start_no
+
+- kind: Runner
+  ancestor: yes
+  properties:
+  - name: race
   - name: start_no
