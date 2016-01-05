@@ -19,6 +19,7 @@ from webapp2_extras import sessions
 
 import formencode
 import formencode_jinja2
+import xlwt
 
 
 # Regex to use for time
@@ -509,6 +510,30 @@ class EventExportHandler(BaseHandler):
             self._export_xls(event)
         else:
             self._export_tsv(event)
+
+    def _export_xls(self, event):
+        wb = xlwt.Workbook()
+        ws = wb.add_sheet(event.title)
+        HEADER = ['Startnr.', 'Name', 'Team', 'Geburtsjahr', 'Geschlecht',
+                  'Altersklasse', 'Strecke', 'Zeit']
+        for i, h in enumerate(HEADER):
+            ws.write(0, i, h)
+        for j, runner in enumerate(event.all_runners()):
+            ws.write(j + 1, 0, runner.start_no)
+            ws.write(j + 1, 1, runner.name)
+            ws.write(j + 1, 2, runner.team)
+            ws.write(j + 1, 3, runner.birth_year)
+            ws.write(j + 1, 4, 'm' if runner.gender == 'male' else 'f')
+            ws.write(j + 1, 5, runner.age_class)
+            ws.write(j + 1, 6, runner.race)
+            ws.write(j + 1, 7, runner.time)
+
+        out = StringIO.StringIO()
+        wb.save(out)
+        self.response.headers['Content-Type'] = 'application/vnd.ms-excel'
+        disp = 'attachment; filename={}.xls'.format(event.key.urlsafe())
+        self.response.headers['Content-Disposition'] = disp
+        self.response.out.write(out.getvalue())
 
     def _export_tsv(self, event):
         self.response.headers['Content-Type'] = 'text/plain'
