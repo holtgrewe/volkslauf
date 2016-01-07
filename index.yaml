@@ -26,4 +26,21 @@ indexes:
   ancestor: yes
   properties:
   - name: race
+  - name: name
+
+- kind: Runner
+  ancestor: yes
+  properties:
+  - name: race
   - name: start_no
+
+- kind: Runner
+  ancestor: yes
+  properties:
+  - name: race
+  - name: time
+
+- kind: Runner
+  ancestor: yes
+  properties:
+  - name: time

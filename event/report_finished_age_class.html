@@ -1,0 +1,38 @@
+{% extends "event/finished_list.html" %}
+
+{% block content %}
+    {% for race, runners2 in runners.iteritems() %}
+        <h2>Strecke: {{ race }}</h2>
+        {% for gender, runners3 in runners2.iteritems() %}
+        {% for age_class, runners4 in runners3.iteritems() %}
+    <h3>
+        Geschlecht: {% if gender == "male" %}m{% else %}w{% endif %},
+        Altersklasse: {{ age_class }}
+    </h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Platz</th>
+                <th>Name</th>
+                <th>Team</th>
+                <th>Altersklasse</th>
+                <th>Zeit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for runner in runners4 %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ runner.name }}</td>
+                <td>{{ runner.team }}</td>
+                <td>{{ runner.age_class }}</td>
+                <td>{{ runner.time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

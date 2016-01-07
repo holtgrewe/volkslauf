@@ -229,7 +229,7 @@ class Runner(ndb.Model):
     gender = ndb.StringProperty(indexed=False)
     birth_year = ndb.IntegerProperty(indexed=False)
     age_class = ndb.StringProperty(indexed=False)
-    time = DurationProperty(indexed=False)
+    time = DurationProperty(indexed=True)
     race = ndb.StringProperty(indexed=True)
 
     def to_tsv(self, sep='\t'):
@@ -500,6 +500,8 @@ class EventReportHandler(BaseHandler):
         event = event_key.get()
         if report_type == 'starter_list':
             self._get_starter_list(event_key, event)
+        elif report_type == 'finished':
+            self._get_finished_list(event_key, event)
 
     def _get_starter_list(self, event_key, event):
         # Get filter / order from query string
@@ -524,6 +526,76 @@ class EventReportHandler(BaseHandler):
             'runners': qry,
         }
         self._render('/event/report_starter_list.html', vals)
+
+    def _get_finished_list(self, event_key, event):
+        # Query for the runners
+        race = self.request.get('race')
+        if race:
+            qry = Runner.query(
+                    Runner.event == event_key and
+                    Runner.time != None and
+                    Runner.race == race,
+                    ancestor=event_key)
+        else:
+            qry = Runner.query(Runner.event == event_key and
+                               Runner.time != None,
+                               ancestor=event_key)
+        qry = qry.order(Runner.time)
+        # Factorize by the properties that we are interested in
+        bys = self.request.get('by', '').split(',') or []
+        if 'gender' in bys and 'age_class' in bys:
+            self._get_finished_list_gender_age_class(
+                    event_key, event, race, qry)
+        elif 'gender' in bys:
+            self._get_finished_list_gender(event_key, event, race, qry)
+        else:
+            self._get_finished_list_all(event_key, event, race, qry)
+
+    def _get_finished_list_gender_age_class(
+            self, event_key, event, race, qry):
+        runners = {}
+        for runner in qry:
+            runners.setdefault(runner.race, {})
+            runners[runner.race].setdefault(runner.gender, {})
+            runners[runner.race][runner.gender].setdefault(
+                    runner.age_class, [])
+            runners[runner.race][runner.gender][runner.age_class].append(
+                    runner)
+        # Render results
+        vals = {
+            'event': event,
+            'race': race,
+            'runners': runners,
+        }
+        self._render('/event/report_finished_age_class.html', vals)
+
+    def _get_finished_list_gender(self, event_key, event, race, qry):
+        runners = {}
+        for runner in qry:
+            runners.setdefault(runner.race, {})
+            runners[runner.race].setdefault(runner.gender, [])
+            runners[runner.race][runner.gender].append(runner)
+        # Render results
+        vals = {
+            'event': event,
+            'race': race,
+            'runners': runners,
+        }
+        self._render('/event/report_finished_gender.html', vals)
+
+    def _get_finished_list_all(self, event_key, event, race, qry):
+        # Factorize results
+        runners = {}
+        for runner in qry:
+            runners.setdefault(runner.race, [])
+            runners[runner.race].append(runner)
+        # Render results
+        vals = {
+            'event': event,
+            'race': race,
+            'runners': runners,
+        }
+        self._render('/event/report_finished_all.html', vals)
 
 
 class EventExportHandler(BaseHandler):
@@ -673,6 +745,8 @@ class RunnerUpdateHandler(BaseHandler):
         form = RunnerForm()
         runner.populate(**form.to_python(dict(self.request.params),
                                          state))
+        if not self.request.params('time'):
+            runner.time = None
         return runner.put()
 
 

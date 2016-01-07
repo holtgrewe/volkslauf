@@ -1,6 +1,15 @@
-{% extends "_main.html" %}
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block header %}
+        <title>Zieleinlaufliste</title>
+        {% endblock %}
+    </head>
+    <body>
 
-{% block content %}
 {% if race == "6km" %}
     <h1>Starterliste {{ event.title }} (6 km)</h1>
 {% elif race == "12km" %}
@@ -17,6 +26,7 @@
             <td>Team</td>
             <td>Geschlecht</td>
             <td>Alterklasse</td>
+            <td>Strecke</td>
         </tr>
     <thead>
     <tbody>
@@ -27,8 +37,9 @@
             <td>{{ runner.team }}</td>
             <td>{% if runner.gender == "male" %}m{% else %}w{% endif %}</td>
             <td>{{ runner.age_class }}</td>
+            <td>{{ runner.race }}</td>
         </tr>
     {% endfor %}
 </ul>
-
-{% endblock %}
+    </body>
+</html>

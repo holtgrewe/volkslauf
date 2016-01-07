@@ -1,0 +1,31 @@
+{% extends "event/finished_list.html" %}
+
+{% block content %}
+    {% for race, runners in runners.iteritems() %}
+    <h2>Strecke: {{ race }}</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Platz</th>
+                <th>Name</th>
+                <th>Team</th>
+                <th>Altersklasse</th>
+                <th>Zeit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for runner in runners %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ runner.name }}</td>
+                <td>{{ runner.team }}</td>
+                <td>{{ runner.age_class }}</td>
+                <td>{{ runner.time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}
+{% endblock %}
+
