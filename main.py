@@ -20,6 +20,7 @@ from webapp2_extras import sessions
 import formencode
 import formencode_jinja2
 import xlwt
+from xhtml2pdf import pisa
 
 
 # Regex to use for time
@@ -317,13 +318,16 @@ class BaseHandler(webapp2.RequestHandler):
         """Return a session using the default cookie key"""
         return self.session_store.get_session()
 
-    def _render(self, tpl_path, tpl_values):
+    def _render(self, tpl_path, tpl_values, write_response=True):
         """Render HTML template at tpl_path with tpl_values to the client
         """
         tpl_values2 = dict(self._default_tpl_values())
         tpl_values2.update(tpl_values)
         template = JINJA_ENVIRONMENT.get_template(tpl_path)
-        self.response.write(template.render(tpl_values2))
+        res = template.render(tpl_values2)
+        if write_response:
+            self.response.write(res)
+        return res
 
     def _default_tpl_values(self):
         """"Return dict with default template values"""
@@ -525,7 +529,15 @@ class EventReportHandler(BaseHandler):
             'order': order,
             'runners': qry,
         }
-        self._render('/event/report_starter_list.html', vals)
+        # Render HTML => PDF => send
+        html = self._render('/event/report_starter_list.html', vals,
+                write_response=False)
+        out = StringIO.StringIO()
+        pdf = pisa.CreatePDF(html, out, encoding='utf-8')
+        self.response.headers['Content-Type'] = 'application/pdf'
+        disp = 'attachment; filename={}.pdf'.format(event.key.urlsafe())
+        #self.response.headers['Content-Disposition'] = disp
+        self.response.out.write(pdf.dest.getvalue())
 
     def _get_finished_list(self, event_key, event):
         # Query for the runners
