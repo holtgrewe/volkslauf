@@ -355,6 +355,11 @@ class EventImportHandler(BaseHandler):
             self.redirect('/event/list')
             return
 
+        if not self.request.get('tsv_file'):
+            self.session.add_flash('Keine Datei ausgewaehlt!', key='error')
+            self._render('event/import.html', {})
+            return
+
         event_key = self._import_from_tsv(self.request.get('tsv_file'))
         event = event_key.get()
         tpl = 'Der Lauf {} wurde erfolgreich importiert.'
