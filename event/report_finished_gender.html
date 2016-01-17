@@ -14,7 +14,7 @@
         {% for gender, runners3 in runners2.iteritems() %}
     <h3>Geschlecht: {% if gender == "male" %}m{% else %}w{% endif %}</h3>
 
-    <table class="finished_list">
+    <table class="finished_list" repeat="1">
         <thead>
             <tr>
                 <th style="width: 10%";>Platz</th>
