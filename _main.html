@@ -60,10 +60,9 @@ $(document).ready(function () {
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Einstellungen</a></li>
             <li><a href="#">Hilfe</a></li>
             <li id="logged_in_as"><a href="#">Benutzer: {{ user }}</a></li>
-            <li><a href="#">Ausloggen</a></li>
+            <li><a href="{{ logout_url }}">Ausloggen</a></li>
           </ul>
         </div>
       </div>

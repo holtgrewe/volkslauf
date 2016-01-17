@@ -14,6 +14,8 @@ handlers:
 
 - url: .*
   script: main.app
+  login: required
+  secure: always
 
 libraries:
 - name: webapp2
