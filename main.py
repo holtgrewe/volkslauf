@@ -634,13 +634,25 @@ class EventReportHandler(BaseHandler):
         runners = [r for r in qry.fetch()]
         runners = sorted(runners, key=lambda x: x.start_no)
         # Render results
-        vals = {
-            'event': event,
-            'runners': runners,
-        }
-        logging.info('event={}, runners={}'.format(event, runners))
-        #self._render_pdf('/event/report_certificates.html', vals)
-        self._render_pdf('/event/report_certificates.html', vals)
+        from reportlab.pdfgen import canvas
+        from reportlab.lib import pagesizes
+        from reportlab.lib import units
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        cm = units.cm
+        buf = StringIO.StringIO()
+        pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+        c = canvas.Canvas(buf, pagesize=pagesizes.A4)
+        c.setFont('Vera', 14)
+        for runner in runners:
+            c.drawCentredString(10 * cm, 10 * cm, runner.name)
+            c.drawCentredString(10 * cm, 20 * cm, runner.time)
+            c.showPage()
+        c.save()
+        self.response.headers['Content-Type'] = 'application/pdf'
+        disp = 'attachment; filename={}'.format('volkslauf.pdf')
+        #self.response.headers['Content-Disposition'] = disp
+        self.response.out.write(buf.getvalue())
 
 
 class EventExportHandler(BaseHandler):
