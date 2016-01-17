@@ -1,6 +1,12 @@
 {% extends "_main.html" %}
 
 {% block content %}
+
+<ol class="breadcrumb">
+    <li><a href="/">Liste Volksl&auml;ufe</a></li>
+    <li class="active">{{ event.title }}</li>
+</ol>
+
 <h1 class="page-header">Volkslauf &raquo;{{ event.title }}&laquo;</h1>
 
 <div class="row">

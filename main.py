@@ -337,7 +337,6 @@ class BaseHandler(webapp2.RequestHandler):
             'flash_info': self.session.get_flashes(key='info'),
             'flash_error': self.session.get_flashes(key='error'),
         }
-        logging.info('vals={}'.format(vals))
         return vals
 
 
@@ -511,6 +510,18 @@ class EventReportHandler(BaseHandler):
             self._get_starter_list(event_key, event)
         elif report_type == 'finished':
             self._get_finished_list(event_key, event)
+        elif report_type == 'certificates':
+            self._get_certificates(event_key, event)
+
+    def _render_pdf(self, template, values, filename='download.pdf'):
+        """Render PDF for download"""
+        html = self._render(template, values, write_response=False)
+        out = StringIO.StringIO()
+        pdf = pisa.CreatePDF(html, out, encoding='utf-8')
+        self.response.headers['Content-Type'] = 'application/pdf'
+        disp = 'attachment; filename={}'.format(filename)
+        #self.response.headers['Content-Disposition'] = disp
+        self.response.out.write(pdf.dest.getvalue())
 
     def _get_starter_list(self, event_key, event):
         # Get filter / order from query string
@@ -534,15 +545,7 @@ class EventReportHandler(BaseHandler):
             'order': order,
             'runners': qry,
         }
-        # Render HTML => PDF => send
-        html = self._render('/event/report_starter_list.html', vals,
-                write_response=False)
-        out = StringIO.StringIO()
-        pdf = pisa.CreatePDF(html, out, encoding='utf-8')
-        self.response.headers['Content-Type'] = 'application/pdf'
-        disp = 'attachment; filename={}.pdf'.format(event.key.urlsafe())
-        #self.response.headers['Content-Disposition'] = disp
-        self.response.out.write(pdf.dest.getvalue())
+        self._render_pdf('/event/report_starter_list.html', vals)
 
     def _get_finished_list(self, event_key, event):
         # Query for the runners
@@ -584,7 +587,7 @@ class EventReportHandler(BaseHandler):
             'race': race,
             'runners': runners,
         }
-        self._render('/event/report_finished_age_class.html', vals)
+        self._render_pdf('/event/report_finished_age_class.html', vals)
 
     def _get_finished_list_gender(self, event_key, event, race, qry):
         runners = {}
@@ -598,7 +601,7 @@ class EventReportHandler(BaseHandler):
             'race': race,
             'runners': runners,
         }
-        self._render('/event/report_finished_gender.html', vals)
+        self._render_pdf('/event/report_finished_gender.html', vals)
 
     def _get_finished_list_all(self, event_key, event, race, qry):
         # Factorize results
@@ -612,7 +615,32 @@ class EventReportHandler(BaseHandler):
             'race': race,
             'runners': runners,
         }
-        self._render('/event/report_finished_all.html', vals)
+        self._render_pdf('/event/report_finished_all.html', vals)
+
+    def _get_certificates(self, event_key, event):
+        # Query for the runners
+        race = self.request.get('race')
+        if race:
+            qry = Runner.query(
+                    Runner.event == event_key and
+                    Runner.time != None and
+                    Runner.race == race,
+                    ancestor=event_key)
+        else:
+            qry = Runner.query(Runner.event == event_key and
+                               Runner.time != None,
+                               ancestor=event_key)
+        # Fetch and sort by start no
+        runners = [r for r in qry.fetch()]
+        runners = sorted(runners, key=lambda x: x.start_no)
+        # Render results
+        vals = {
+            'event': event,
+            'runners': runners,
+        }
+        logging.info('event={}, runners={}'.format(event, runners))
+        #self._render_pdf('/event/report_certificates.html', vals)
+        self._render_pdf('/event/report_certificates.html', vals)
 
 
 class EventExportHandler(BaseHandler):
@@ -695,7 +723,6 @@ class RunnerCreateHandler(BaseHandler):
             self._create_runner(event_key)
             self.redirect('/event/view/{}'.format(event_key.urlsafe()))
         except formencode.Invalid, e:
-            logging.info(e.error_dict)
             self._render('runner/create.html',
                          {'runner': e.value,
                           'event': event_key.get().to_dict(),

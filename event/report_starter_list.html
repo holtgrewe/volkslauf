@@ -1,7 +1,7 @@
 {% extends "_report.html" %}
 
 {% block title %}
-<title>Zieleinlaufliste</title>
+<title>Starterliste</title>
 {% endblock %}
 
 {% block header %}
@@ -15,26 +15,26 @@
 {% endblock %}
 
 {% block content %}
-<table repeat="1">
+<table class="starter_list" repeat="1">
     <thead>
         <tr class="header">
-            <th class="start_no">Startnr.</th>
-            <th class="name">Name</th>
-            <th class="team">Verein</th>
-            <th class="gender">m/w</th>
-            <th class="age_class">Klasse</th>
-            <th class="race">Strecke</th>
+            <th style="width: 10%;">Startnr.</th>
+            <th style="width: 30%;">Name</th>
+            <th style="width: 30%;">Verein</th>
+            <th style="width: 10%;">m/w</th>
+            <th style="width: 10%;">Klasse</th>
+            <th style="width: 10%;">Strecke</th>
         </tr>
     <thead>
     <tbody>
     {% for runner in runners %}
         <tr>
-            <td>{{ runner.start_no }}</td>
+            <td style="text-align: right;">{{ runner.start_no }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td>{{ runner.name }}</td>
             <td>{{ runner.team }}</td>
-            <td>{% if runner.gender == "male" %}m{% else %}w{% endif %}</td>
+            <td style="text-align: center;">{% if runner.gender == "male" %}m{% else %}w{% endif %}</td>
             <td>{{ runner.age_class }}</td>
-            <td>{{ runner.race }}</td>
+            <td style="text-align: right;">{{ runner.race }}</td>
         </tr>
     {% endfor %}
     </tbody>

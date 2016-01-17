@@ -24,18 +24,36 @@
             }
         }
         body {
-            font-size: 12pt;
+            font-size: 11pt;
         }
         h1 { font-size: 200%; text-align: center; }
         #footer_content {
             text-align: center;
         }
 
-        /*table { border: 1px solid black; }*/
-        tr { height: 1.1em; }
-        .start_no, .gender, .race { width: 10%; }
-        .name, .team { width: 35%; }
-        .age_class { width: 20%; }
+        /* Starter List */
+        table.starter_list { }
+        table.starter_list tr {
+            height: 1.1em;
+        }
+        table.starter_list .start_no {
+            width: 5%;
+        }
+        table.starter_list .name {
+            width: 30%;
+        }
+        table.starter_list .team {
+            width: 30%;
+        }
+        table.starter_list .gender {
+            width: 5%;
+        }
+        table.starter_list .age_class {
+            width: 5%;
+        }
+        table.starter_list .race {
+            width: 5%;
+        }
 
         {% block css %}{% endblock %}
         </style>

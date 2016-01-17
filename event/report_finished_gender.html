@@ -1,4 +1,12 @@
-{% extends "event/finished_list.html" %}
+{% extends "_report.html" %}
+
+{% block title %}
+<title>Zieleinlaufliste</title>
+{% endblock %}
+
+{% block header %}
+<h1>Zieleinlaufliste</h1>
+{% endblock %}
 
 {% block content %}
     {% for race, runners2 in runners.iteritems() %}
@@ -6,24 +14,24 @@
         {% for gender, runners3 in runners2.iteritems() %}
     <h3>Geschlecht: {% if gender == "male" %}m{% else %}w{% endif %}</h3>
 
-    <table>
+    <table class="finished_list">
         <thead>
             <tr>
-                <th>Platz</th>
-                <th>Name</th>
-                <th>Team</th>
-                <th>Altersklasse</th>
-                <th>Zeit</th>
+                <th style="width: 10%";>Platz</th>
+                <th style="width: 30%";>Name</th>
+                <th style="width: 30%";>Team</th>
+                <th style="width: 15%";>Altersklasse</th>
+                <th style="width: 15%";>Zeit</th>
             </tr>
         </thead>
         <tbody>
             {% for runner in runners3 %}
             <tr>
-                <td>{{ loop.index }}</td>
+                <td style="text-align: right;">{{ loop.index }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
                 <td>{{ runner.name }}</td>
                 <td>{{ runner.team }}</td>
                 <td>{{ runner.age_class }}</td>
-                <td>{{ runner.time }}</td>
+                <td style="text-align: right;">{{ runner.time }}</td>
             </tr>
             {% endfor %}
         </tbody>
